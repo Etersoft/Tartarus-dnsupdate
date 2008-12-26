@@ -1,0 +1,21 @@
+env = Environment()
+env.Tool('slice2cpp', toolpath=['tools'])
+
+def ice_e(env, target, source):
+    target = [i % str(target[0]) for i in ('%s.cpp', '%s.h')]
+    return target, source
+
+env['CPPPATH'] = ['#.']
+env['LIBS'] = ['Ice']
+env['CCFLAGS'] = ['-O2']
+env.ParseConfig("pkg-config krb5user --cflags --libs")
+
+env.Append(ICE2CPP_INCPATH=['/usr/share/Tartarus/slice'])
+core = env.Slice2Cpp('/usr/share/Tartarus/slice/core/exceptions.ice', ICE2CPP_OUTDIR="core", ICE2CPP_FLAGS='--include-dir=core')[0]
+dns = env.Slice2Cpp('/usr/share/Tartarus/slice/DNS/DNS.ice', ICE2CPP_OUTDIR="DNS", ICE2CPP_FLAGS='--include-dir=DNS')[0]
+tdnsupdate = env.Program('tdnsupdate', ['tdnsupdate.cpp', core, dns])
+tdnsupdateconfig = ['tdnsupdate.config']
+InstallAs('/usr/sbin/Tartarus-dnsupdate', tdnsupdate)
+Install('/etc/Tartarus/clients', tdnsupdateconfig)
+
+Alias('install', FindInstalledFiles())

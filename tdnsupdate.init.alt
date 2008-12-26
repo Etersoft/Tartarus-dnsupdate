@@ -1,0 +1,75 @@
+#!/bin/sh
+
+# Init file for the Tartarus DNS update service
+#
+# chkconfig: 2345 11 89
+# description: Client DNS record updater
+
+WITHOUT_RC_COMPAT=1
+
+# source function library
+. /etc/init.d/functions
+
+LOCKFILE=/var/lock/subsys/tdnsupdate
+RETVAL=0
+
+start()
+{
+	action "Try to update DNS record at Tartarus" Tartarus-dnsupdate \
+		&& touch "$LOCKFILE"
+	RETVAL=$?
+	return $RETVAL
+}
+
+stop()
+{
+	rm -f "$LOCKFILE"
+}
+
+restart()
+{
+	stop
+	start
+}
+
+status()
+{
+	if [ -f "$LOCKFILE" ]; then
+		echo "This service was last time (re-)started at $(LANG=C LANGUAGE=C /bin/ls -l --time-style='+%Y-%m-%d %H:%M:%S %z' "$LOCKFILE" |tr -s ' ' |cut --fields 6-8 -d' ')."
+		echo "No other status information available."
+	else
+		echo "This service hasn't been started since stopped last time."
+	fi
+}
+
+# See how we were called.
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		restart
+		;;
+	reload)
+		;;
+	condstop)
+		if [ -e "$LOCKFILE" ]; then
+			stop
+		fi
+		;;
+	condrestart|condreload)
+		# "condrestart" is called during package upgrade.
+		# Nothing to do here - this is not a normal service.
+		;;
+	status)
+		status
+		;;
+	*)
+		msg_usage "${0##*/} {start|stop|restart|reload|status|condrestart|condreload|condstop}"
+		RETVAL=1
+esac
+
+exit $RETVAL
