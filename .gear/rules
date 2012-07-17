@@ -1,2 +1,3 @@
 copy: *.alt
+copy: *.patch
 tar: Tartarus-dnsupdate
