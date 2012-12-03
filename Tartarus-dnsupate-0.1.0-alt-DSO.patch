@@ -7,7 +7,7 @@ index 4cad985..41b9096 100644
  
  env['CPPPATH'] = ['#.']
 -env['LIBS'] = ['Ice']
-+env['LIBS'] = ['IceUtil', 'Ice']
- env['CCFLAGS'] = ['-O2']
++env['LIBS'] = ['IceUtil', 'Ice', 'pthread']
+ env['CCFLAGS'] = ['-O2', '-g', '-fpermissive']
  env.ParseConfig("pkg-config krb5user --cflags --libs")
  

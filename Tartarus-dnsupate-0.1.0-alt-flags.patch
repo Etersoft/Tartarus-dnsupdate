@@ -1,0 +1,13 @@
+diff --git a/Tartarus-dnsupdate/SConstruct b/Tartarus-dnsupdate/SConstruct
+index 4cad985..beff0df 100644
+--- a/Tartarus-dnsupdate/SConstruct
++++ b/Tartarus-dnsupdate/SConstruct
+@@ -7,7 +7,7 @@ def ice_e(env, target, source):
+ 
+ env['CPPPATH'] = ['#.']
+ env['LIBS'] = ['Ice']
+-env['CCFLAGS'] = ['-O2']
++env['CCFLAGS'] = ['-O2', '-g', '-fpermissive']
+ env.ParseConfig("pkg-config krb5user --cflags --libs")
+ 
+ env.Append(ICE2CPP_INCPATH=['/usr/share/Tartarus/slice'])
